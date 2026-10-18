@@ -118,15 +118,19 @@ class _HomeState extends State<HomeTab> {
               onTap: () => context.push('/offers'),
               child: Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(color: kTeal, borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [kTeal, Color(0xFF0369A1)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [BoxShadow(color: kTeal.withValues(alpha: 0.25), blurRadius: 10, offset: const Offset(0, 4))]),
                   child: Row(children: [
                     Container(width: 44, height: 44, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.local_offer_outlined, color: Colors.white)),
                     gapW(12),
                     const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Txt('Student and job-seeker deals', size: 15, w: kXB, color: Colors.white),
+                      Txt('Student & Job-Seeker Deals', size: 15, w: kXB, color: Colors.white),
                       SizedBox(height: 2),
-                      Txt('Up to 15% off near universities and offices', size: 12, color: Colors.white),
+                      Txt('Up to 15% off near universities and offices', size: 12, color: Colors.white70),
                     ])),
+                    const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white70),
                   ]))),
           SectionHeader('Featured stays', action: 'See all', onAction: () => context.push('/search')),
           SizedBox(height: 285, child: ListView(scrollDirection: Axis.horizontal, children: [for (final s in list) Padding(padding: const EdgeInsetsDirectional.only(end: 12), child: StayCard(s))])),

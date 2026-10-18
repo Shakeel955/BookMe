@@ -34,7 +34,7 @@ class StayDetailsScreen extends ConsumerWidget {
                   style: const TextStyle(
                       fontSize: 22, fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
-              Text('${stay.address}',
+              Text(stay.address,
                   style: const TextStyle(color: AppColors.textGrey)),
               const SizedBox(height: 12),
               Text('Rs ${stay.pricePerNight} / night',

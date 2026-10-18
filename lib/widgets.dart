@@ -324,7 +324,24 @@ class StayRow extends StatelessWidget {
       child: Box(
           padding: const EdgeInsets.all(10),
           child: Row(children: [
-            Photo(s.tint, w: 96, h: 104, r: 12, heroTag: 'stay-photo-${s.id}'),
+            Stack(children: [
+              Photo(s.tint, w: 96, h: 104, r: 12, heroTag: 'stay-photo-${s.id}'),
+              Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                      decoration: const BoxDecoration(color: Colors.black45, shape: BoxShape.circle),
+                      child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: ListenableBuilder(
+                              listenable: AppState.i,
+                              builder: (c, _) {
+                                final saved = AppState.i.saved.contains(s.id);
+                                return GestureDetector(
+                                    onTap: () => AppState.i.toggleSaved(s.id),
+                                    child: Icon(saved ? Icons.favorite : Icons.favorite_border, size: 16, color: saved ? Colors.redAccent : Colors.white));
+                              })))),
+            ]),
             gapW(12),
             Expanded(
                 child: SizedBox(
@@ -362,6 +379,21 @@ class StayCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(color: kAmber, borderRadius: BorderRadius.circular(8)),
                             child: Text(s.badge!, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))))),
+                  Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                          decoration: const BoxDecoration(color: Colors.black45, shape: BoxShape.circle),
+                          child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: ListenableBuilder(
+                                  listenable: AppState.i,
+                                  builder: (c, _) {
+                                    final saved = AppState.i.saved.contains(s.id);
+                                    return GestureDetector(
+                                        onTap: () => AppState.i.toggleSaved(s.id),
+                                        child: Icon(saved ? Icons.favorite : Icons.favorite_border, size: 18, color: saved ? Colors.redAccent : Colors.white));
+                                  })))),
                 ]),
                 gap(10),
                 Padding(

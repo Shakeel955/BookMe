@@ -32,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
         data: (stays) => ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: stays.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, i) => _StayTile(stay: stays[i]),
         ),
       ),
@@ -65,7 +65,7 @@ class _StayTile extends StatelessWidget {
                 width: 110,
                 height: 110,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, _, _) => Container(
                   width: 110,
                   height: 110,
                   color: AppColors.border,

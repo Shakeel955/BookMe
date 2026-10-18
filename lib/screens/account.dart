@@ -45,14 +45,31 @@ class _EditState extends State<EditProfileScreen> {
   Widget build(BuildContext context) => ScreenBox(
       title: 'Edit profile',
       bottom: Btn('Save changes', () {
+        final n = name.text.trim();
+        final e = email.text.trim();
+        final ph = phone.text.trim();
+
+        if (n.isEmpty) {
+          snack(context, 'Name cannot be empty');
+          return;
+        }
+        if (e.isEmpty || !e.contains('@')) {
+          snack(context, 'Please enter a valid email address');
+          return;
+        }
+        if (ph.isNotEmpty && ph.length < 7) {
+          snack(context, 'Please enter a valid phone number');
+          return;
+        }
+
         s.update(() {
-          s.name = name.text.trim().isEmpty ? s.name : name.text.trim();
-          s.email = email.text.trim().isEmpty ? s.email : email.text.trim();
-          s.phone = phone.text.trim();
+          s.name = n;
+          s.email = e;
+          s.phone = ph;
           s.role = role;
         });
         Navigator.of(context).maybePop();
-        snack(context, 'Profile updated');
+        snack(context, 'Profile updated successfully');
       }),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Center(child: Column(children: [

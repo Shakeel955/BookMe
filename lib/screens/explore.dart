@@ -296,50 +296,62 @@ class DetailsScreen extends StatelessWidget {
                 context.push('/rooms/${s.id}');
               })),
             ]))),
-        body: Stack(children: [
-          GestureDetector(onTap: () => context.push('/gallery/${s.id}'), child: Photo(s.tint, w: double.infinity, h: 280, r: 0, heroTag: 'stay-photo-${s.id}')),
-          Positioned.fill(child: SingleChildScrollView(child: Column(children: [
-            const SizedBox(height: 230),
-            Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(20, 28, 20, 32),
-                decoration: BoxDecoration(color: p.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Txt(tr(s.type.label).toUpperCase(), size: 11, w: kB, color: p.tealText),
-                    GestureDetector(onTap: () => context.push('/reviews/${s.id}'), child: Rate(s.rating, n: s.reviewCount)),
-                  ]),
-                  gap(6),
-                  Txt(s.name, size: 24, w: kXB),
-                  gap(6),
-                  Row(children: [Icon(Icons.place_outlined, size: 16, color: p.grey), gapW(6), Expanded(child: Txt(s.address, size: 13, color: p.grey))]),
-                  gap(16),
-                  Row(children: [_tile(context, Icons.restaurant, '${s.food}', 'Food rating'), gapW(10), _tile(context, Icons.shield_outlined, s.cctv ? 'CCTV' : 'Basic', 'Safety'), gapW(10), _tile(context, Icons.family_restroom, s.family ? 'Yes' : 'Solo', 'Family friendly')]),
-                  if (s.offer != null) ...[
-                    gap(14),
-                    Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: const Color(0xFFFEF3C7), borderRadius: BorderRadius.circular(14)), child: Row(children: [const Icon(Icons.local_offer_outlined, size: 20, color: Color(0xFF92400E)), gapW(10), Expanded(child: Txt(s.offer!, size: 13, w: kB, color: const Color(0xFF92400E)))])),
-                  ],
-                  gap(16),
-                  Txt(s.description, color: p.grey, height: 1.5),
-                  gap(16),
-                  const Txt('Amenities', size: 15, w: kXB),
-                  gap(10),
-                  Wrap(spacing: 8, runSpacing: 8, children: [for (final a in s.amenities) Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), decoration: BoxDecoration(color: p.bg, borderRadius: BorderRadius.circular(999)), child: Txt(a, size: 12, w: kSB))]),
-                  gap(16),
-                  const Txt('Food and meals', size: 15, w: kXB),
-                  gap(6),
-                  Txt(s.foodInfo, size: 13, color: p.grey, height: 1.5),
-                  gap(16),
-                  const Txt('Perks', size: 15, w: kXB),
-                  gap(6),
-                  for (final x in s.perks) Padding(padding: const EdgeInsets.only(bottom: 6), child: Row(children: [const Icon(Icons.check, size: 16, color: kTeal), gapW(8), Expanded(child: Txt(x, size: 13))])),
-                  gap(16),
-                  Btn('See all reviews', () => context.push('/reviews/${s.id}'), outline: true, h: 46),
-                  gap(24),
-                ])),
-          ]))),
-          SafeArea(child: Padding(padding: const EdgeInsets.fromLTRB(20, 8, 20, 0), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const BackBtn(), HeartBtn(s.id)]))),
-        ]));
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 280,
+              pinned: true,
+              backgroundColor: p.surface,
+              leading: const Padding(padding: EdgeInsets.all(8), child: BackBtn()),
+              actions: [Padding(padding: const EdgeInsets.all(8), child: HeartBtn(s.id))],
+              flexibleSpace: FlexibleSpaceBar(
+                background: GestureDetector(
+                  onTap: () => context.push('/gallery/${s.id}'),
+                  child: Photo(s.tint, w: double.infinity, h: 280, r: 0, heroTag: 'stay-photo-${s.id}'),
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 28, 20, 32),
+                  decoration: BoxDecoration(color: p.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Txt(tr(s.type.label).toUpperCase(), size: 11, w: kB, color: p.tealText),
+                      GestureDetector(onTap: () => context.push('/reviews/${s.id}'), child: Rate(s.rating, n: s.reviewCount)),
+                    ]),
+                    gap(6),
+                    Txt(s.name, size: 24, w: kXB),
+                    gap(6),
+                    Row(children: [Icon(Icons.place_outlined, size: 16, color: p.grey), gapW(6), Expanded(child: Txt(s.address, size: 13, color: p.grey))]),
+                    gap(16),
+                    Row(children: [_tile(context, Icons.restaurant, '${s.food}', 'Food rating'), gapW(10), _tile(context, Icons.shield_outlined, s.cctv ? 'CCTV' : 'Basic', 'Safety'), gapW(10), _tile(context, Icons.family_restroom, s.family ? 'Yes' : 'Solo', 'Family friendly')]),
+                    if (s.offer != null) ...[
+                      gap(14),
+                      Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: const Color(0xFFFEF3C7), borderRadius: BorderRadius.circular(14)), child: Row(children: [const Icon(Icons.local_offer_outlined, size: 20, color: Color(0xFF92400E)), gapW(10), Expanded(child: Txt(s.offer!, size: 13, w: kB, color: const Color(0xFF92400E)))])),
+                    ],
+                    gap(16),
+                    Txt(s.description, color: p.grey, height: 1.5),
+                    gap(16),
+                    const Txt('Amenities', size: 15, w: kXB),
+                    gap(10),
+                    Wrap(spacing: 8, runSpacing: 8, children: [for (final a in s.amenities) Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), decoration: BoxDecoration(color: p.bg, borderRadius: BorderRadius.circular(999)), child: Txt(a, size: 12, w: kSB))]),
+                    gap(16),
+                    const Txt('Food and meals', size: 15, w: kXB),
+                    gap(6),
+                    Txt(s.foodInfo, size: 13, color: p.grey, height: 1.5),
+                    gap(16),
+                    const Txt('Perks', size: 15, w: kXB),
+                    gap(6),
+                    for (final x in s.perks) Padding(padding: const EdgeInsets.only(bottom: 6), child: Row(children: [const Icon(Icons.check, size: 16, color: kTeal), gapW(8), Expanded(child: Txt(x, size: 13))])),
+                    gap(16),
+                    Btn('See all reviews', () => context.push('/reviews/${s.id}'), outline: true, h: 46),
+                    gap(24),
+                  ])),
+            ),
+          ],
+        ));
   }
 }
 

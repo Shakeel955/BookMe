@@ -125,15 +125,51 @@ class _OnbState extends State<OnboardingScreen> {
   }
 }
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
   @override
-  Widget build(BuildContext context) {
-    void login() {
-      AppState.i.update(() => AppState.i.loggedIn = true);
-      context.go('/home');
+  State<LoginScreen> createState() => _LoginState();
+}
+
+class _LoginState extends State<LoginScreen> {
+  final emailCtrl = TextEditingController();
+  final passwordCtrl = TextEditingController();
+  bool loading = false;
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
+  }
+
+  void login() {
+    final email = emailCtrl.text.trim();
+    final password = passwordCtrl.text.trim();
+
+    if (email.isEmpty || !email.contains('@')) {
+      snack(context, 'Please enter a valid email address');
+      return;
+    }
+    if (password.length < 6) {
+      snack(context, 'Password must be at least 6 characters');
+      return;
     }
 
+    setState(() => loading = true);
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (!mounted) return;
+      setState(() => loading = false);
+      AppState.i.update(() {
+        AppState.i.loggedIn = true;
+        AppState.i.email = email;
+      });
+      context.go('/home');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final p = context.p;
     return Scaffold(
         body: SafeArea(
@@ -145,11 +181,11 @@ class LoginScreen extends StatelessWidget {
                   const Txt('Welcome back', size: 28, w: kXB),
                   gap(6),
                   Txt('Log in to see your trips and saved stays.', color: p.grey, height: 1.5),
-                  const Field(label: 'Email', hint: 'you@email.com', type: TextInputType.emailAddress),
-                  const Field(label: 'Password', hint: 'Enter password', obscure: true),
+                  Field(label: 'Email', hint: 'you@email.com', ctrl: emailCtrl, type: TextInputType.emailAddress),
+                  Field(label: 'Password', hint: 'Enter password', ctrl: passwordCtrl, obscure: true),
                   Align(alignment: AlignmentDirectional.centerEnd, child: LinkBtn('Forgot password?', () => context.push('/forgot'))),
                   gap(6),
-                  Btn('Log in', login),
+                  loading ? const Center(child: CircularProgressIndicator()) : Btn('Log in', login),
                   gap(20),
                   Row(children: [Expanded(child: Divider(color: p.border)), Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Txt('or', size: 12, color: p.grey)), Expanded(child: Divider(color: p.border))]),
                   gap(20),
@@ -167,35 +203,66 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupState extends State<SignupScreen> {
-  final name = TextEditingController(), email = TextEditingController(), phone = TextEditingController();
+  final name = TextEditingController(), email = TextEditingController(), phone = TextEditingController(), password = TextEditingController();
   String role = 'Student';
+  bool loading = false;
 
   @override
   void dispose() {
     name.dispose();
     email.dispose();
     phone.dispose();
+    password.dispose();
     super.dispose();
+  }
+
+  void submit() {
+    final n = name.text.trim();
+    final e = email.text.trim();
+    final ph = phone.text.trim();
+    final pwd = password.text.trim();
+
+    if (n.isEmpty) {
+      snack(context, 'Please enter your full name');
+      return;
+    }
+    if (e.isEmpty || !e.contains('@')) {
+      snack(context, 'Please enter a valid email address');
+      return;
+    }
+    if (ph.length < 7) {
+      snack(context, 'Please enter a valid phone number');
+      return;
+    }
+    if (pwd.length < 6) {
+      snack(context, 'Password must be at least 6 characters');
+      return;
+    }
+
+    setState(() => loading = true);
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (!mounted) return;
+      setState(() => loading = false);
+      AppState.i.update(() {
+        AppState.i.name = n;
+        AppState.i.email = e;
+        AppState.i.phone = ph;
+        AppState.i.role = role;
+      });
+      context.push('/otp?next=/home');
+    });
   }
 
   @override
   Widget build(BuildContext context) => ScreenBox(
       title: 'Create account',
-      bottom: Btn('Create account', () {
-        AppState.i.update(() {
-          if (name.text.trim().isNotEmpty) AppState.i.name = name.text.trim();
-          if (email.text.trim().isNotEmpty) AppState.i.email = email.text.trim();
-          AppState.i.phone = phone.text.trim();
-          AppState.i.role = role;
-        });
-        context.push('/otp?next=/home');
-      }),
+      bottom: loading ? const Center(child: CircularProgressIndicator()) : Btn('Create account', submit),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Txt('Takes a minute. No payment needed to sign up.', color: context.p.grey),
         Field(label: 'Full name', hint: 'Your name', ctrl: name),
         Field(label: 'Email', hint: 'you@email.com', ctrl: email, type: TextInputType.emailAddress),
         Field(label: 'Phone', hint: '03XX XXXXXXX', ctrl: phone, type: TextInputType.phone),
-        const Field(label: 'Password', hint: 'At least 8 characters', obscure: true),
+        Field(label: 'Password', hint: 'At least 6 characters', ctrl: password, obscure: true),
         gap(16),
         const Txt('I am a', size: 13, w: kB),
         gap(8),

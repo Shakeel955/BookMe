@@ -202,10 +202,17 @@ class AddCardScreen extends StatefulWidget {
 
 class _AddCardState extends State<AddCardScreen> {
   final num = TextEditingController();
+  final expiry = TextEditingController();
+  final cvv = TextEditingController();
+  final cardholder = TextEditingController();
   bool save = true;
+
   @override
   void dispose() {
     num.dispose();
+    expiry.dispose();
+    cvv.dispose();
+    cardholder.dispose();
     super.dispose();
   }
 
@@ -214,20 +221,42 @@ class _AddCardState extends State<AddCardScreen> {
       title: 'Add card',
       bottom: Btn('Save card', () {
         final d = num.text.replaceAll(RegExp(r'\D'), '');
-        if (d.length < 12) {
-          snack(context, 'Enter a valid card number');
+        final exp = expiry.text.trim();
+        final c = cvv.text.trim();
+        final name = cardholder.text.trim();
+
+        if (d.length < 13) {
+          snack(context, 'Please enter a valid card number');
           return;
         }
+        if (exp.length < 4) {
+          snack(context, 'Please enter a valid expiry date (MM/YY)');
+          return;
+        }
+        if (c.length < 3) {
+          snack(context, 'Please enter a valid 3-digit CVV');
+          return;
+        }
+        if (name.isEmpty) {
+          snack(context, 'Please enter the name on card');
+          return;
+        }
+
         AppState.i.update(() {
           AppState.i.card = d.substring(d.length - 4);
           AppState.i.payment = 'Card';
         });
         Navigator.of(context).maybePop();
+        snack(context, 'Card added successfully');
       }),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Field(label: 'Card number', hint: '0000 0000 0000 0000', ctrl: num, type: TextInputType.number),
-        const Row(children: [Expanded(child: Field(label: 'Expiry', hint: 'MM / YY')), SizedBox(width: 12), Expanded(child: Field(label: 'CVV', hint: '123', obscure: true))]),
-        const Field(label: 'Name on card', hint: 'As printed on card'),
+        Row(children: [
+          Expanded(child: Field(label: 'Expiry', hint: 'MM / YY', ctrl: expiry, type: TextInputType.datetime)),
+          const SizedBox(width: 12),
+          Expanded(child: Field(label: 'CVV', hint: '123', ctrl: cvv, obscure: true, type: TextInputType.number)),
+        ]),
+        Field(label: 'Name on card', hint: 'As printed on card', ctrl: cardholder),
         gap(18),
         Row(children: [const Expanded(child: Txt('Save for next time', w: kSB)), Switch(value: save, activeTrackColor: kTeal, onChanged: (v) => setState(() => save = v))]),
       ]));
